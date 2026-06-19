@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { Footer } from "@/components/marketing/footer";
-import { PricingCards } from "@/components/marketing/pricing-cards";
-import { FoundingBanner } from "@/components/marketing/founding-banner";
+import { PricingPlans } from "@/components/landing/pricing-plans";
 import { FAQ } from "@/components/landing/faq";
 
 export const metadata: Metadata = {
@@ -23,17 +22,14 @@ export default function PricingPage() {
               Pricing that scales with your margin
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              Every plan includes a 14-day free trial. Founding customers lock in 40% off for life.
+              Every plan includes a 14-day free trial. Founding customers lock in their price for life.
             </p>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <FoundingBanner />
-        <div className="mt-10">
-          <PricingCards />
-        </div>
+        <PricingPlans />
       </section>
 
       <section className="border-t border-border bg-card py-20">
