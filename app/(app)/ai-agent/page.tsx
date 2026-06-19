@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Badge, SeverityBadge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/misc";
 import { RECOMMENDATIONS, SUGGESTED_QUESTIONS } from "@/lib/ai";
+import { PaywallModal } from "@/components/paywall-modal";
 import { formatCurrency } from "@/lib/format";
 import type { AiRecommendation } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -134,6 +135,7 @@ function ChatPanel() {
   ]);
   const [input, setInput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [paywall, setPaywall] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -152,6 +154,11 @@ function ChatPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q }),
       });
+      if (res.status === 402) {
+        setMessages((m) => [...m, { role: "assistant", content: "You've used your free AI analysis. Upgrade to the Founding Customer plan for unlimited AI profit recommendations." }]);
+        setPaywall(true);
+        return;
+      }
       const data = await res.json();
       setMessages((m) => [...m, { role: "assistant", content: data.answer || "I couldn't generate a response just now." }]);
     } catch {
@@ -162,6 +169,8 @@ function ChatPanel() {
   };
 
   return (
+    <>
+    <PaywallModal open={paywall} onOpenChange={setPaywall} variant="analysis" />
     <Card className="sticky top-20 flex h-[calc(100vh-7rem)] flex-col">
       <CardHeader className="flex-row items-center gap-2 space-y-0 border-b border-border py-3">
         <span className="flex size-8 items-center justify-center rounded-lg bg-brand text-white"><Bot className="size-4" /></span>
@@ -218,5 +227,6 @@ function ChatPanel() {
         </form>
       </div>
     </Card>
+    </>
   );
 }

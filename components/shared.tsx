@@ -4,20 +4,28 @@ import { ArrowDownRight, ArrowUpRight, Info, type LucideIcon } from "lucide-reac
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 
-/** Honest, non-intrusive notice shown on data pages while running on sample data. */
+/**
+ * Sample-data notice shown whenever the app is in Sample Mode (no real store
+ * data connected). Keeps users from confusing sample numbers with their own.
+ */
 export function DemoModeBanner({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800",
+        "flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800",
         className
       )}
     >
-      <Info className="mt-0.5 size-4 shrink-0" />
-      <p>
-        <span className="font-semibold">Demo Mode</span> — using sample ecommerce data. Connect your
-        store or upload CSV to analyze real profit.
-      </p>
+      <span className="inline-flex items-center gap-2">
+        <Info className="size-4 shrink-0" />
+        <span className="rounded-md bg-amber-200/70 px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
+          Sample Mode
+        </span>
+      </span>
+      <span>You&apos;re viewing sample ecommerce data.</span>
+      <Link href="/upload" className="font-semibold underline underline-offset-2 hover:text-amber-900">
+        Upload your store data to unlock personalized profit analysis →
+      </Link>
     </div>
   );
 }

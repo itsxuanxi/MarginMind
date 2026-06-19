@@ -1,77 +1,30 @@
-"use client";
-
-import * as React from "react";
-import {
-  CreditCard,
-  Check,
-  ExternalLink,
-  Loader2,
-  Download,
-  Zap,
-} from "lucide-react";
-import { toast } from "sonner";
+import { Zap, Receipt } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/shared";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/misc";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { PLANS, type PlanId } from "@/lib/plans";
-import { formatCurrency, formatDate } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import { PricingPlans } from "@/components/landing/pricing-plans";
+import { ManageBillingButton, UpgradeButton, PortalLinkButton } from "@/components/billing-controls";
+import {
+  getEntitlements,
+  FREE_EXPORT_LIMIT,
+  FREE_ANALYSIS_LIMIT,
+} from "@/lib/entitlements";
+import { formatDate } from "@/lib/format";
 
-const CURRENT: PlanId = "growth";
-const STATUS = "trialing"; // trialing | active | past_due | canceled | unpaid
-const RENEWAL = new Date(Date.now() + 9 * 86400000);
+export const metadata = { title: "Billing" };
 
-const USAGE = [
-  { label: "Orders this month", used: 3240, limit: 5000 },
-  { label: "Connected stores", used: 3, limit: 3 },
-  { label: "AI queries", used: 142, limit: 1000 },
-];
+const PLAN_LABEL: Record<string, { name: string; price: string }> = {
+  free: { name: "Free", price: "$0" },
+  founding: { name: "Founding Customer", price: "$9.99 CAD / mo" },
+  pro: { name: "Pro", price: "$29.99 CAD / mo" },
+};
 
-const INVOICES = [
-  { id: "INV-1042", date: new Date(Date.now() - 2 * 86400000), amount: 59, status: "Trial" },
-  { id: "INV-1018", date: new Date(Date.now() - 32 * 86400000), amount: 59, status: "Paid" },
-  { id: "INV-0994", date: new Date(Date.now() - 62 * 86400000), amount: 59, status: "Paid" },
-];
-
-export default function BillingPage() {
-  const [loading, setLoading] = React.useState<string | null>(null);
-  const plan = PLANS.find((p) => p.id === CURRENT)!;
-
-  const openPortal = async () => {
-    setLoading("portal");
-    try {
-      const res = await fetch("/api/stripe/portal", { method: "POST" });
-      const data = await res.json();
-      if (data.url) window.location.href = data.url;
-      else toast.info("Stripe isn't configured — this is the demo billing view.");
-    } catch {
-      toast.error("Couldn't open the billing portal.");
-    } finally {
-      setLoading(null);
-    }
-  };
-
-  const changePlan = async (target: PlanId) => {
-    if (target === "enterprise") { window.location.href = "/contact"; return; }
-    setLoading(target);
-    try {
-      const res = await fetch("/api/stripe/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: target }),
-      });
-      const data = await res.json();
-      if (data.url) window.location.href = data.url;
-      else toast.success(`Plan change to ${target} recorded (demo mode).`);
-    } catch {
-      toast.error("Couldn't start checkout.");
-    } finally {
-      setLoading(null);
-    }
-  };
+export default async function BillingPage() {
+  const e = await getEntitlements();
+  const label = PLAN_LABEL[e.plan] ?? PLAN_LABEL.free;
+  const statusVariant =
+    e.status === "active" ? "success" : e.status === "trialing" ? "info" : e.status === "past_due" || e.status === "unpaid" ? "danger" : "default";
 
   return (
     <div className="space-y-6">
@@ -84,26 +37,37 @@ export default function BillingPage() {
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-semibold">{plan.name} plan</h2>
-                  <Badge variant={STATUS === "trialing" ? "info" : "success"} className="capitalize">{STATUS}</Badge>
+                  <h2 className="text-xl font-semibold">{label.name} plan</h2>
+                  {e.isPaid ? (
+                    <Badge variant={statusVariant} className="capitalize">{e.status}</Badge>
+                  ) : (
+                    <Badge variant="default">Free</Badge>
+                  )}
                 </div>
-                <p className="mt-1 text-sm text-muted-foreground">{plan.tagline}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {e.isPaid
+                    ? "Full access — unlimited analyses, exports and AI recommendations."
+                    : "Sample access — one free export and one AI analysis. Upgrade to unlock everything."}
+                </p>
                 <p className="mt-4 flex items-baseline gap-1">
-                  <span className="tabular text-3xl font-semibold">{formatCurrency(plan.foundingPrice!)}</span>
-                  <span className="text-sm text-muted-foreground">/month · founding price</span>
+                  <span className="tabular text-3xl font-semibold">{label.price}</span>
                 </p>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {STATUS === "trialing" ? "Trial ends" : "Renews"} on <span className="font-medium text-foreground">{formatDate(RENEWAL, "long")}</span>
-                </p>
+                {e.currentPeriodEnd && (
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {e.status === "trialing" ? "Trial ends" : "Renews"} on{" "}
+                    <span className="font-medium text-foreground">{formatDate(e.currentPeriodEnd, "long")}</span>
+                  </p>
+                )}
               </div>
               <div className="flex flex-col gap-2">
-                <Button variant="default" onClick={openPortal} disabled={loading === "portal"}>
-                  {loading === "portal" ? <Loader2 className="size-4 animate-spin" /> : <CreditCard className="size-4" />}
-                  Manage billing
-                </Button>
-                <Button variant="ghost" size="sm" onClick={openPortal}>
-                  <ExternalLink className="size-3.5" /> Update payment method
-                </Button>
+                {e.isPaid ? (
+                  <>
+                    <ManageBillingButton />
+                    <PortalLinkButton>Update payment method</PortalLinkButton>
+                  </>
+                ) : (
+                  <UpgradeButton />
+                )}
               </div>
             </div>
           </CardContent>
@@ -111,102 +75,62 @@ export default function BillingPage() {
 
         {/* Usage */}
         <Card>
-          <CardHeader className="pb-2"><CardTitle>Usage this period</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle>Usage</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            {USAGE.map((u) => {
-              const pct = (u.used / u.limit) * 100;
-              return (
-                <div key={u.label}>
-                  <div className="mb-1.5 flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{u.label}</span>
-                    <span className="tabular font-medium">{u.used.toLocaleString()} / {u.limit.toLocaleString()}</span>
-                  </div>
-                  <Progress value={pct} indicatorClassName={pct > 85 ? "bg-amber-500" : undefined} />
-                </div>
-              );
-            })}
-            <div className="rounded-lg border border-brand/20 bg-[var(--brand-soft)] p-3 text-sm text-brand-strong">
-              <Zap className="mr-1 inline size-4" /> Approaching your order limit? Upgrade to Scale for 50,000 orders/mo.
-            </div>
+            <UsageRow label="Exports" used={e.exportCount} limit={e.isPaid ? null : FREE_EXPORT_LIMIT} />
+            <UsageRow label="AI analyses" used={e.analysisCount} limit={e.isPaid ? null : FREE_ANALYSIS_LIMIT} />
+            {!e.isPaid && (
+              <div className="rounded-lg border border-brand/20 bg-[var(--brand-soft)] p-3 text-sm text-brand-strong">
+                <Zap className="mr-1 inline size-4" /> Upgrade for unlimited exports, analyses and full AI recommendations.
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Plan switcher */}
+      {/* Plans */}
       <Card>
-        <CardHeader><SectionHeading title="Change plan" description="Upgrade or downgrade anytime. Changes are prorated." /></CardHeader>
-        <CardContent className="grid gap-4 lg:grid-cols-4">
-          {PLANS.map((p) => {
-            const isCurrent = p.id === CURRENT;
-            return (
-              <div key={p.id} className={cn("rounded-xl border p-4", isCurrent ? "border-brand bg-[var(--brand-soft)]/30" : "border-border")}>
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold">{p.name}</h3>
-                  {isCurrent && <Badge variant="success">Current</Badge>}
-                </div>
-                <p className="mt-2 tabular text-2xl font-semibold">
-                  {p.price === null ? "Custom" : formatCurrency(p.foundingPrice!)}
-                  {p.price !== null && <span className="text-sm font-normal text-muted-foreground">/mo</span>}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">{p.limits.orders}</p>
-                <Button
-                  variant={isCurrent ? "outline" : "brand"}
-                  size="sm"
-                  className="mt-4 w-full"
-                  disabled={isCurrent || loading === p.id}
-                  onClick={() => changePlan(p.id)}
-                >
-                  {loading === p.id && <Loader2 className="size-4 animate-spin" />}
-                  {isCurrent ? "Current plan" : p.id === "enterprise" ? "Contact Sales" : "Switch"}
-                </Button>
-              </div>
-            );
-          })}
+        <CardHeader><SectionHeading title={e.isPaid ? "Change plan" : "Upgrade your plan"} description="Founding pricing is locked for life. 14-day free trial on every plan." /></CardHeader>
+        <CardContent>
+          <PricingPlans />
         </CardContent>
       </Card>
 
       {/* Invoices */}
       <Card>
-        <CardHeader className="pb-2"><CardTitle>Invoices</CardTitle></CardHeader>
-        <CardContent className="px-0 pb-2">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead>Invoice</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Receipt</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {INVOICES.map((inv) => (
-                <TableRow key={inv.id}>
-                  <TableCell className="font-medium">{inv.id}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{formatDate(inv.date)}</TableCell>
-                  <TableCell className="tabular text-right">{formatCurrency(inv.amount)}</TableCell>
-                  <TableCell><Badge variant={inv.status === "Paid" ? "success" : "info"}>{inv.status}</Badge></TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="xs" onClick={() => toast.success("Downloading receipt…")}><Download className="size-3.5" /></Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <Card className="border-red-200">
-        <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
-          <div>
-            <h3 className="font-semibold">Cancel subscription</h3>
-            <p className="text-sm text-muted-foreground">You&apos;ll keep access until the end of your billing period.</p>
+        <CardHeader className="flex-row items-center justify-between space-y-0">
+          <CardTitle>Invoices</CardTitle>
+          {e.isPaid && <PortalLinkButton>View in portal</PortalLinkButton>}
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-10 text-center">
+            <span className="flex size-11 items-center justify-center rounded-xl bg-secondary text-muted-foreground"><Receipt className="size-5" /></span>
+            <p className="mt-3 text-sm font-medium">
+              {e.isPaid ? "Invoices are managed in the Stripe billing portal" : "No invoices yet"}
+            </p>
+            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+              {e.isPaid
+                ? "Open the billing portal to download receipts and view payment history."
+                : "Start a plan to see invoices and receipts here."}
+            </p>
           </div>
-          <Button variant="outline" className="border-red-300 text-red-600 hover:bg-red-50" onClick={() => toast("Opening cancellation flow…")}>
-            Cancel plan
-          </Button>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+function UsageRow({ label, used, limit }: { label: string; used: number; limit: number | null }) {
+  const pct = limit ? Math.min(100, (used / limit) * 100) : 100;
+  return (
+    <div>
+      <div className="mb-1.5 flex items-center justify-between text-sm">
+        <span className="text-muted-foreground">{label}</span>
+        <span className="tabular font-medium">
+          {used} / {limit ?? "∞"}
+        </span>
+      </div>
+      <Progress value={limit ? pct : 8} indicatorClassName={limit && pct >= 100 ? "bg-amber-500" : undefined} />
     </div>
   );
 }

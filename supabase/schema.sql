@@ -37,15 +37,24 @@ exception when duplicate_object then null; end $$;
 
 -- ---------- Core ----------
 create table if not exists public.users (
-  id              uuid primary key default gen_random_uuid(),
-  clerk_user_id   text unique,
-  email           text not null,
-  full_name       text,
-  company         text,
-  role            text default 'Founder',
-  is_admin        boolean not null default false,
-  created_at      timestamptz not null default now()
+  id                  uuid primary key default gen_random_uuid(),
+  clerk_user_id       text unique,
+  email               text not null,
+  full_name           text,
+  company             text,
+  role                text default 'Founder',
+  is_admin            boolean not null default false,
+  -- Subscription & usage (kept in sync by the Stripe webhook + export/AI routes)
+  is_paid_user        boolean not null default false,
+  free_analysis_used  integer not null default 0,
+  export_count        integer not null default 0,
+  created_at          timestamptz not null default now()
 );
+
+-- For existing databases, add the columns idempotently:
+alter table public.users add column if not exists is_paid_user boolean not null default false;
+alter table public.users add column if not exists free_analysis_used integer not null default 0;
+alter table public.users add column if not exists export_count integer not null default 0;
 
 create table if not exists public.stores (
   id          uuid primary key default gen_random_uuid(),

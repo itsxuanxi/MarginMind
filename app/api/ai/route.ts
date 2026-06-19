@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { features, openaiModel } from "@/lib/config";
 import { buildContext, mockChatAnswer } from "@/lib/ai";
+import { getEntitlements, recordAnalysis, canAnalyze, FREE_ANALYSIS_LIMIT } from "@/lib/entitlements";
 
 export const runtime = "nodejs";
 
@@ -20,6 +21,16 @@ export async function POST(req: Request) {
   if (!question.trim()) {
     return NextResponse.json({ error: "Question is required" }, { status: 400 });
   }
+
+  // Server-side free-analysis gate (paid users are unlimited).
+  const ent = await getEntitlements();
+  if (!canAnalyze(ent)) {
+    return NextResponse.json(
+      { limitReached: true, analysisCount: ent.analysisCount, limit: FREE_ANALYSIS_LIMIT },
+      { status: 402 }
+    );
+  }
+  await recordAnalysis();
 
   if (features.openai) {
     try {

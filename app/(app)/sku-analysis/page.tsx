@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Search, Download, ArrowUpDown } from "lucide-react";
 import { PageHeader, DemoModeBanner } from "@/components/shared";
+import { ExportMenu } from "@/components/export-menu";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -55,7 +56,7 @@ export default function SkuAnalysisPage() {
   return (
     <div className="space-y-6">
       <PageHeader title="SKU Analysis" description="Full per-product P&L across every store, channel and market.">
-        <Button variant="outline" size="sm"><Download className="size-4" /> Export CSV</Button>
+        <ExportMenu />
       </PageHeader>
 
       <DemoModeBanner />

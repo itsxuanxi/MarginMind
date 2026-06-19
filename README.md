@@ -77,14 +77,60 @@ The schema includes all 17 tables (`users`, `stores`, `products`, `orders`, `ord
 `ai_recommendations`, `uploads`, `integrations`, `subscriptions`, `stripe_customers`,
 `billing_events`) with UUID keys, foreign keys, indexes and RLS policies.
 
-## 💳 Stripe setup (optional)
+## 💳 Payments, plans & exports (Stripe — test mode → production)
 
-1. Create the three subscription **Products/Prices** and put their IDs in `STRIPE_PRICE_STARTER`,
-   `STRIPE_PRICE_GROWTH`, `STRIPE_PRICE_SCALE`.
-2. Add `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
-3. Create a webhook to `/api/stripe/webhook` and set `STRIPE_WEBHOOK_SECRET`.
-4. Checkout includes a **14-day trial**; subscription states map to
-   `trialing | active | past_due | canceled | unpaid`.
+Without keys the app runs a **demo billing flow**: clicking a plan instantly activates a simulated
+subscription (HTTP-only cookie) and unlocks paid features, so the whole funnel is testable. Free
+users get **1 export + 1 AI analysis**, then the paywall appears — all enforced **server-side**
+([`lib/entitlements.ts`](lib/entitlements.ts), [`app/api/export/route.ts`](app/api/export/route.ts)).
+
+### 1. Create the two CAD prices (Stripe Test Mode first)
+In the [Stripe Dashboard → Test mode](https://dashboard.stripe.com/test/products), create two
+**recurring monthly** prices in **CAD** and copy their `price_…` IDs:
+
+| Plan | Price | Env var |
+| --- | --- | --- |
+| Founding Customer | **$9.99 CAD / month** | `STRIPE_FOUNDING_PRICE_ID` |
+| Pro | **$29.99 CAD / month** | `STRIPE_PRO_PRICE_ID` |
+
+### 2. Add env vars (`.env.local`)
+```
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...        # from step 3
+STRIPE_FOUNDING_PRICE_ID=price_...
+STRIPE_PRO_PRICE_ID=price_...
+```
+
+### 3. Test the webhook locally
+```bash
+stripe login
+stripe listen --forward-to localhost:3000/api/stripe/webhook   # prints whsec_… → STRIPE_WEBHOOK_SECRET
+```
+The webhook ([`app/api/stripe/webhook/route.ts`](app/api/stripe/webhook/route.ts)) verifies the
+signature and handles `checkout.session.completed`, `customer.subscription.created|updated|deleted`,
+and `invoice.payment_succeeded|payment_failed`, syncing to Supabase when configured.
+
+### 4. Test the payment
+Use Stripe's test card **`4242 4242 4242 4242`**, any future expiry, any CVC/ZIP. Flow: pricing CTA →
+(sign in) → Stripe Checkout → pay → redirect to `/dashboard?checkout=success` → subscription active →
+paid features unlocked. Manage/cancel via the **Customer Portal** ([`/api/stripe/portal`](app/api/stripe/portal/route.ts)).
+
+### 5. Vercel env vars
+Add all six vars above in **Project → Settings → Environment Variables** (set
+`NEXT_PUBLIC_APP_URL` to your production URL, e.g. `https://margin-mind.vercel.app`). Add a Vercel
+webhook endpoint in Stripe pointing at `https://<your-domain>/api/stripe/webhook`.
+
+### 6. Go live (production switch)
+Swap test keys for **live** keys (`sk_live_…`, `pk_live_…`), recreate the two CAD prices in live mode,
+update the price-ID + webhook-secret env vars, and redeploy. No code changes required.
+
+### Export (CSV + PDF)
+The dashboard / SKU / Settings **Export ▾** menu generates a **CSV** (full metrics, SKU table, leaks,
+markets) and a branded **executive PDF** (jsPDF). Access is gated server-side by `/api/export`
+(free = 1 export, paid = unlimited). Filenames: `marginmind-report-YYYY-MM-DD.csv`,
+`marginmind-executive-report-YYYY-MM-DD.pdf`.
 
 ## 🤖 OpenAI setup (optional)
 

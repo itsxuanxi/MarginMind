@@ -13,6 +13,7 @@ import { Switch, Avatar } from "@/components/ui/misc";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { STORES } from "@/lib/mock-data";
+import { ExportMenu } from "@/components/export-menu";
 
 const TEAM = [
   { name: "Alex Rivera", email: "zhang2543723434@gmail.com", role: "Owner", status: "Active" },
@@ -146,8 +147,8 @@ export default function SettingsPage() {
         <TabsContent value="data">
           <div className="space-y-4">
             <Card>
-              <CardHeader><CardTitle>Export your data</CardTitle><CardDescription>Download a full copy of your profit data as CSV.</CardDescription></CardHeader>
-              <CardContent><Button variant="outline" onClick={() => toast.success("Preparing export — we'll email a download link.")}>Export all data</Button></CardContent>
+              <CardHeader><CardTitle>Export your data</CardTitle><CardDescription>Download a full copy of your profit data as CSV or an executive PDF.</CardDescription></CardHeader>
+              <CardContent><ExportMenu variant="outline" align="left" /></CardContent>
             </Card>
             <Card className="border-red-200">
               <CardHeader><CardTitle className="text-red-600">Delete workspace</CardTitle><CardDescription>Permanently delete this workspace and all of its data. This cannot be undone.</CardDescription></CardHeader>

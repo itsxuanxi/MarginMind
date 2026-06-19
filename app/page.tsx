@@ -23,9 +23,8 @@ import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { Footer } from "@/components/marketing/footer";
 import { EmailCapture } from "@/components/marketing/email-capture";
 import { FAQ } from "@/components/landing/faq";
-import { DashboardMock } from "@/components/landing/dashboard-mock";
-import { FloatingMetrics } from "@/components/landing/floating-metrics";
-import { Reveal } from "@/components/landing/reveal";
+import { Hero } from "@/components/landing/hero";
+import { MotionReveal, Stagger, StaggerItem } from "@/components/landing/motion";
 import { PricingPlans } from "@/components/landing/pricing-plans";
 import { RoiCalculator } from "@/components/landing/roi-calculator";
 import { CaseStudy } from "@/components/landing/case-study";
@@ -33,8 +32,6 @@ import { Testimonials } from "@/components/landing/testimonials";
 import { FounderStory } from "@/components/landing/founder-story";
 import { SectionHead } from "@/components/landing/section";
 import { Button } from "@/components/ui/button";
-
-const CHANNELS = ["Shopify", "Amazon", "TikTok Shop", "Walmart"];
 
 const PAINS = [
   { icon: TrendingUp, title: "Revenue up, profit down", body: "Top-line keeps growing while your bank balance doesn't. MarginMind shows exactly why." },
@@ -69,78 +66,8 @@ export default function LandingPage() {
 
       <MarketingNav />
 
-      {/* ============ HERO ============ */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 grid-bg opacity-[0.4]" />
-        <div className="absolute inset-0 radial-fade" />
-        <div className="absolute left-1/2 top-0 -z-0 h-[480px] w-[900px] -translate-x-1/2 rounded-full bg-brand/10 blur-[120px]" />
-        <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 sm:pt-20 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center animate-fade-up">
-            <div className="flex justify-center">
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium shadow-sm">
-                <span className="size-1.5 rounded-full bg-brand" />
-                <span className="text-muted-foreground">Built for cross-border sellers who care about true profit</span>
-              </span>
-            </div>
-            <h1 className="mt-6 text-balance text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[3.5rem] lg:leading-[1.05]">
-              Know Your Real Profit Across Every{" "}
-              <span className="bg-gradient-to-r from-brand to-emerald-500 bg-clip-text text-transparent">
-                Product, Market, and Channel.
-              </span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-pretty text-lg text-muted-foreground">
-              MarginMind is an AI Profit Agent for cross-border e-commerce sellers. It tracks
-              true margins, detects profit leaks, and recommends actions that improve profitability.
-            </p>
-            <p className="mx-auto mt-4 max-w-xl text-pretty text-[15px] text-foreground/80">
-              Explore a <span className="font-semibold text-foreground">live demo with sample ecommerce data</span> —
-              no setup, no card. Connect your stores or upload a CSV later when you&apos;re ready.
-            </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button asChild variant="brand" size="lg" className="w-full sm:w-auto">
-                <Link href="/sign-up">Start Free Trial <ArrowRight className="size-4" /></Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-                <Link href="/dashboard"><PlayCircle className="size-4" /> Try live demo with sample data</Link>
-              </Button>
-            </div>
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1"><CheckCircle2 className="size-3.5 text-brand" /> 14-day free trial</span>
-              <span className="flex items-center gap-1"><CheckCircle2 className="size-3.5 text-brand" /> No credit card</span>
-              <span className="flex items-center gap-1"><Database className="size-3.5 text-brand" /> Upload CSV later when ready</span>
-            </div>
-            <div className="mt-6">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">
-                Designed for sellers on
-              </p>
-              <div className="mt-2.5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-                {CHANNELS.map((c) => (
-                  <span key={c} className="text-sm font-semibold tracking-tight text-muted-foreground/70">{c}</span>
-                ))}
-              </div>
-            </div>
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-muted-foreground">
-              <span className="flex items-center gap-1.5"><Lock className="size-4 text-brand" /> 256-bit encryption</span>
-              <span className="h-3 w-px bg-border" />
-              <span className="flex items-center gap-1.5"><ShieldCheck className="size-4 text-brand" /> Row-level security</span>
-              <span className="h-3 w-px bg-border" />
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="size-4 text-brand" /> GDPR-ready</span>
-            </div>
-          </div>
-
-          {/* ============ DASHBOARD MOCKUP ============ */}
-          <Reveal delay={120} className="relative mx-auto mt-14 max-w-6xl">
-            <div className="pointer-events-none absolute -inset-x-8 -top-8 bottom-0 -z-10 rounded-[2rem] bg-gradient-to-b from-brand/10 to-transparent blur-2xl" />
-            <FloatingMetrics />
-            <div className="animate-float-slow">
-              <DashboardMock />
-            </div>
-            <p className="mt-3 text-center text-xs text-muted-foreground">
-              Live demo dashboard, populated with realistic sample ecommerce data.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      {/* ============ HERO + DASHBOARD MOCKUP ============ */}
+      <Hero />
 
       {/* ============ FOUNDER STORY ============ */}
       <section className="border-y border-border bg-card py-20 sm:py-28">
@@ -202,16 +129,16 @@ export default function LandingPage() {
       {/* ============ FEATURES ============ */}
       <section id="features" className="border-t border-border bg-card py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Reveal>
+          <MotionReveal>
             <SectionHead
               eyebrow="The financial OS for e-commerce"
               title="Everything you need to defend your margin"
               description="Ramp-grade clarity meets AI-native decision-making, purpose-built for cross-border sellers."
             />
-          </Reveal>
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((f, i) => (
-              <Reveal key={f.title} delay={i * 70} className="h-full">
+          </MotionReveal>
+          <Stagger className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((f) => (
+              <StaggerItem key={f.title} className="h-full">
                 <div className="group relative h-full overflow-hidden rounded-2xl border border-border bg-background p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl">
                   <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand/40 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                   <span className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-emerald-500 text-white shadow-sm ring-1 ring-inset ring-white/20 transition-transform duration-300 group-hover:scale-105">
@@ -220,9 +147,9 @@ export default function LandingPage() {
                   <h3 className="mt-4 font-semibold tracking-tight">{f.title}</h3>
                   <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{f.body}</p>
                 </div>
-              </Reveal>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
@@ -262,16 +189,16 @@ export default function LandingPage() {
       {/* ============ PRICING ============ */}
       <section id="pricing" className="border-t border-border bg-card py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Reveal>
+          <MotionReveal>
             <SectionHead
               eyebrow="Founding customer pricing"
               title="Simple pricing that pays for itself"
               description="Lock in founding pricing before public launch. Every plan starts with a 14-day free trial — no credit card required."
             />
-          </Reveal>
-          <Reveal delay={120} className="mt-12 block">
+          </MotionReveal>
+          <MotionReveal delay={120} className="mt-12 block">
             <PricingPlans />
-          </Reveal>
+          </MotionReveal>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5"><CheckCircle2 className="size-4 text-brand" /> 14-day free trial</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 className="size-4 text-brand" /> Cancel anytime</span>
@@ -302,7 +229,7 @@ export default function LandingPage() {
           <div className="animate-float-slow absolute right-[6%] top-[35%] h-[220px] w-[220px] rounded-full bg-emerald-400/10 blur-[90px]" />
           <div className="animate-float-delayed absolute left-[8%] bottom-[10%] h-[180px] w-[180px] rounded-full bg-emerald-500/10 blur-[80px]" />
         </div>
-        <Reveal className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
+        <MotionReveal className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
           <div className="flex justify-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-sidebar-foreground">
               <Sparkles className="size-3.5 text-brand" /> See your real profit in under 2 minutes
@@ -331,7 +258,7 @@ export default function LandingPage() {
             <span className="flex items-center gap-1.5"><Database className="size-4 text-brand" /> Upload CSV later when ready</span>
             <span>or <Link href="/contact" className="font-medium text-white underline-offset-4 hover:underline">talk to the founder</Link></span>
           </div>
-        </Reveal>
+        </MotionReveal>
       </section>
 
       <Footer />

@@ -1,33 +1,35 @@
 import { NextResponse } from "next/server";
-import { appUrl, features } from "@/lib/config";
+import { features } from "@/lib/config";
+import { getStripe, getBaseUrl } from "@/lib/stripe";
+import { getEntitlements } from "@/lib/entitlements";
 
 export const runtime = "nodejs";
 
 /**
- * Opens the Stripe Customer Portal. In a live setup you would look up the
- * signed-in user's `stripe_customer_id` from the database. In demo mode we
- * return null so the UI shows the in-app billing view instead.
+ * Opens the Stripe Customer Portal (cancel, update payment method, invoices).
+ * Resolves the customer from the verified entitlements (DB or post-checkout
+ * cookie), so it works without a separate database.
  */
-export async function POST() {
+export async function POST(req: Request) {
   if (!features.stripe) {
-    return NextResponse.json({ url: null, demo: true });
+    return NextResponse.json({ url: null, error: "unavailable" }, { status: 503 });
   }
 
-  const customerId = process.env.STRIPE_DEMO_CUSTOMER_ID; // wire to your DB in production
+  const ent = await getEntitlements();
+  const customerId = ent.customerId || process.env.STRIPE_DEMO_CUSTOMER_ID;
   if (!customerId) {
-    return NextResponse.json({ url: null, demo: true, reason: "no_customer" });
+    return NextResponse.json({ url: null, error: "no_customer" }, { status: 400 });
   }
 
   try {
-    const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+    const stripe = getStripe();
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: `${appUrl}/billing`,
+      return_url: `${getBaseUrl(req)}/billing`,
     });
     return NextResponse.json({ url: session.url });
   } catch (err) {
     console.error("Stripe portal error:", err);
-    return NextResponse.json({ url: null, demo: true, reason: "stripe_error" });
+    return NextResponse.json({ url: null, error: "stripe_error" }, { status: 500 });
   }
 }

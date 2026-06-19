@@ -1,10 +1,14 @@
-import Link from "next/link";
-import { Check, Sparkles, Flame } from "lucide-react";
+"use client";
+
+import * as React from "react";
+import { Check, Sparkles, Flame, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { startCheckout } from "@/lib/checkout-client";
 
 interface Plan {
-  id: string;
+  id: "founding" | "pro";
   name: string;
   price: string;
   futurePrice: string;
@@ -55,6 +59,18 @@ const PLANS: Plan[] = [
 ];
 
 export function PricingPlans() {
+  const [loading, setLoading] = React.useState<Plan["id"] | null>(null);
+
+  const onCheckout = async (id: Plan["id"]) => {
+    setLoading(id);
+    try {
+      await startCheckout(id);
+    } catch {
+      toast.error("Couldn't start checkout. Please try again.");
+      setLoading(null);
+    }
+  };
+
   return (
     <div className="mx-auto grid max-w-4xl gap-6 lg:grid-cols-2">
       {PLANS.map((plan) => (
@@ -96,8 +112,15 @@ export function PricingPlans() {
             </p>
           )}
 
-          <Button asChild variant={plan.popular ? "brand" : "outline"} size="lg" className="mt-6 w-full">
-            <Link href="/sign-up">Start Free Trial</Link>
+          <Button
+            onClick={() => onCheckout(plan.id)}
+            disabled={loading !== null}
+            variant={plan.popular ? "brand" : "outline"}
+            size="lg"
+            className="mt-6 w-full"
+          >
+            {loading === plan.id ? <Loader2 className="size-4 animate-spin" /> : null}
+            Start Free Trial
           </Button>
 
           <ul className="mt-6 space-y-2.5">

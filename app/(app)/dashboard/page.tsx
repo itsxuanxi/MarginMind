@@ -20,6 +20,8 @@ import {
   Download,
 } from "lucide-react";
 import { PageHeader, StatCard, SectionHeading, DemoModeBanner } from "@/components/shared";
+import { ExportMenu } from "@/components/export-menu";
+import { CheckoutSuccessToast } from "@/components/checkout-success-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -68,6 +70,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      <CheckoutSuccessToast />
       <PageHeader title="Profit Dashboard" description="Where you're making money — and where you're losing it.">
         <Select value={store} onChange={(e) => setStore(e.target.value)} size="sm" className="w-44">
           <option value="all">All stores</option>
@@ -81,7 +84,7 @@ export default function DashboardPage() {
           <option value="90d">Last 90 days</option>
           <option value="12m">Last 12 months</option>
         </Select>
-        <Button variant="outline" size="sm"><Download className="size-4" /> Export</Button>
+        <ExportMenu />
       </PageHeader>
 
       <DemoModeBanner />
