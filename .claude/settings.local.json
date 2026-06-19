@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm -v)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(PORT=3210 npm run start)",
+      "Bash(tee /tmp/mm_server.log)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(pkill -f \"next start\")",
+      "Bash(pkill -f \"next-server\")",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(node_modules/.bin/tsc --noEmit)"
+    ]
+  }
+}
