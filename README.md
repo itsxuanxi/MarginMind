@@ -180,3 +180,46 @@ supabase/           schema.sql + seed.sql (RLS, indexes, seed)
 
 Provided as an MVP reference implementation. Replace legal templates and review security before
 commercial launch.
+
+## 🟢 Real Data Mode (Supabase)
+
+By default the app runs in **Sample Mode** — every dashboard shows clearly-labeled
+sample data. Connect Supabase and upload a CSV, and each account flips to
+**Real Data Mode** automatically (the sample banner disappears and metrics are
+computed from the uploaded rows).
+
+### 1. Create the database
+1. Create a project at [supabase.com](https://supabase.com).
+2. SQL Editor → run [`supabase/schema.sql`](supabase/schema.sql) (full schema), or
+   apply the migration [`supabase/migrations/0001_real_data_mode.sql`](supabase/migrations/0001_real_data_mode.sql)
+   on top of an existing schema.
+
+### 2. Environment variables (local `.env.local` **and** Vercel)
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...          # public — safe in the browser
+SUPABASE_SERVICE_ROLE_KEY=eyJ...              # SECRET — server only, never expose
+```
+All server data access uses the **service-role** key and is always scoped to the
+current account's `user_id`, so data is isolated per account.
+
+### 3. How accounts are isolated
+- With **Clerk** configured → each customer is keyed by `clerk_user_id` (true multi-tenant).
+- Without auth yet → an anonymous workspace keyed by an HTTP-only `mm_workspace`
+  cookie (per-browser isolation that upgrades cleanly when Clerk is added).
+
+### 4. CSV ingestion
+- Upload Data → drop a CSV → **Import**. `POST /api/upload` parses it, auto-detects
+  columns (SKU, revenue, product cost, shipping, customs, ad spend, returns, …),
+  computes profit via the engine, and writes isolated `profit_metrics` rows.
+- Required columns: an **SKU/product** identifier and a **Revenue/Sales** column.
+  Everything else is optional (defaults to 0). Invalid/empty files return a clear error.
+- The dashboard reads `/api/dataset` and shows real metrics; time-series charts fill
+  in as more periods are uploaded.
+
+### 5. Tables (also Shopify-ready)
+`users` (+ `workspace_token`, `data_source`), `uploaded_reports`, `profit_metrics`
+(carry a `source` column = `csv` today, `shopify` later), `ai_recommendations`,
+and a `subscription_status` view over Stripe-synced `subscriptions`. Future Shopify
+sync simply writes `source='shopify'` rows into the same `profit_metrics` table — no
+schema change needed.

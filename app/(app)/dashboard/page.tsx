@@ -35,27 +35,36 @@ import {
   CostBreakdownDonut,
   PerformanceBars,
 } from "@/components/charts";
-import { SKUS, STORES, TREND, byChannel, byMarket, costBreakdown, topProducts, worstProducts } from "@/lib/mock-data";
+import { byChannel, byMarket, costBreakdown, topProducts, worstProducts } from "@/lib/aggregates";
 import { summarize } from "@/lib/profit";
-import { RECOMMENDATIONS } from "@/lib/ai";
+import { buildRecommendations } from "@/lib/ai";
+import { useDataset } from "@/components/use-dataset";
 import { formatCurrency, formatPercent } from "@/lib/format";
+import type { Sku } from "@/lib/types";
 
 export default function DashboardPage() {
+  const { skus: allSkus, trend, dataMode } = useDataset();
   const [store, setStore] = React.useState("all");
+  const stores = React.useMemo(
+    () => Array.from(new Set(allSkus.map((k) => k.store).filter(Boolean))),
+    [allSkus]
+  );
   const skus = React.useMemo(
-    () => (store === "all" ? SKUS : SKUS.filter((s) => s.storeId === store)),
-    [store]
+    () => (store === "all" ? allSkus : allSkus.filter((k) => k.store === store)),
+    [store, allSkus]
   );
   const s = React.useMemo(() => summarize(skus), [skus]);
+  const recommendations = React.useMemo(() => buildRecommendations(skus), [skus]);
 
-  const lastMonth = TREND[TREND.length - 1];
-  const prevMonth = TREND[TREND.length - 2];
-  const revDelta = +(((lastMonth.revenue - prevMonth.revenue) / prevMonth.revenue) * 100).toFixed(1);
-  const profitDelta = +(((lastMonth.netProfit - prevMonth.netProfit) / prevMonth.netProfit) * 100).toFixed(1);
-  const marginDelta = +(lastMonth.margin - prevMonth.margin).toFixed(1);
+  const hasTrend = trend.length >= 2;
+  const lastMonth = trend[trend.length - 1];
+  const prevMonth = trend[trend.length - 2];
+  const revDelta = hasTrend ? +(((lastMonth.revenue - prevMonth.revenue) / prevMonth.revenue) * 100).toFixed(1) : undefined;
+  const profitDelta = hasTrend ? +(((lastMonth.netProfit - prevMonth.netProfit) / prevMonth.netProfit) * 100).toFixed(1) : undefined;
+  const marginDelta = hasTrend ? +(lastMonth.margin - prevMonth.margin).toFixed(1) : undefined;
 
-  const best = topProducts(1)[0];
-  const worst = worstProducts(1)[0];
+  const best = topProducts(skus, 1)[0];
+  const worst = worstProducts(skus, 1)[0];
   const top = [...skus].sort((a, b) => b.netProfit - a.netProfit).slice(0, 5);
   const bottom = [...skus].sort((a, b) => a.netProfit - b.netProfit).slice(0, 5);
 
@@ -74,8 +83,8 @@ export default function DashboardPage() {
       <PageHeader title="Profit Dashboard" description="Where you're making money — and where you're losing it.">
         <Select value={store} onChange={(e) => setStore(e.target.value)} size="sm" className="w-44">
           <option value="all">All stores</option>
-          {STORES.map((st) => (
-            <option key={st.id} value={st.id}>{st.name}</option>
+          {stores.map((name) => (
+            <option key={name} value={name}>{name}</option>
           ))}
         </Select>
         <Select size="sm" defaultValue="30d" className="w-36">
@@ -87,7 +96,7 @@ export default function DashboardPage() {
         <ExportMenu />
       </PageHeader>
 
-      <DemoModeBanner />
+      {dataMode === "sample" && <DemoModeBanner />}
 
       {/* Primary KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -174,7 +183,7 @@ export default function DashboardPage() {
             <CardTitle>Revenue vs Net Profit</CardTitle>
           </CardHeader>
           <CardContent>
-            <RevenueProfitChart data={TREND} />
+            {hasTrend ? <RevenueProfitChart data={trend} /> : <TrendEmpty />}
           </CardContent>
         </Card>
         <Card>
@@ -182,9 +191,9 @@ export default function DashboardPage() {
             <CardTitle>Cost Breakdown</CardTitle>
           </CardHeader>
           <CardContent>
-            <CostBreakdownDonut data={costBreakdown()} />
+            <CostBreakdownDonut data={costBreakdown(skus)} />
             <div className="mt-3 grid grid-cols-2 gap-1.5">
-              {costBreakdown().map((c, i) => {
+              {costBreakdown(skus).map((c, i) => {
                 const colors = ["var(--chart-2)","var(--chart-5)","var(--chart-4)","var(--chart-3)","var(--chart-6)","var(--chart-1)","var(--muted-foreground)"];
                 return (
                   <div key={c.name} className="flex items-center gap-1.5 text-xs">
@@ -206,16 +215,16 @@ export default function DashboardPage() {
           <TabsTrigger value="channel">Channel Performance</TabsTrigger>
         </TabsList>
         <TabsContent value="trend">
-          <Card><CardContent className="pt-6"><NetProfitTrend data={TREND} /></CardContent></Card>
+          <Card><CardContent className="pt-6">{hasTrend ? <NetProfitTrend data={trend} /> : <TrendEmpty />}</CardContent></Card>
         </TabsContent>
         <TabsContent value="margin">
-          <Card><CardContent className="pt-6"><MarginTrend data={TREND} /></CardContent></Card>
+          <Card><CardContent className="pt-6">{hasTrend ? <MarginTrend data={trend} /> : <TrendEmpty />}</CardContent></Card>
         </TabsContent>
         <TabsContent value="market">
-          <Card><CardContent className="pt-6"><PerformanceBars data={byMarket()} nameKey="market" /></CardContent></Card>
+          <Card><CardContent className="pt-6"><PerformanceBars data={byMarket(skus)} nameKey="market" /></CardContent></Card>
         </TabsContent>
         <TabsContent value="channel">
-          <Card><CardContent className="pt-6"><PerformanceBars data={byChannel()} nameKey="channel" /></CardContent></Card>
+          <Card><CardContent className="pt-6"><PerformanceBars data={byChannel(skus)} nameKey="channel" /></CardContent></Card>
         </TabsContent>
       </Tabs>
 
@@ -232,7 +241,7 @@ export default function DashboardPage() {
           <Button asChild variant="brand" size="sm"><Link href="/ai-agent"><Sparkles className="size-4" /> Open Agent</Link></Button>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-3">
-          {RECOMMENDATIONS.slice(0, 3).map((r) => (
+          {recommendations.slice(0, 3).map((r) => (
             <Link key={r.id} href="/ai-agent" className="rounded-xl border border-border p-4 transition-shadow hover:shadow-md">
               <div className="flex items-center justify-between">
                 <Badge variant="purple">{r.category}</Badge>
@@ -248,7 +257,15 @@ export default function DashboardPage() {
   );
 }
 
-function ProductTable({ title, subtitle, rows, positive }: { title: string; subtitle: string; rows: typeof SKUS; positive?: boolean }) {
+function TrendEmpty() {
+  return (
+    <div className="flex h-[260px] items-center justify-center px-4 text-center text-sm text-muted-foreground">
+      Trends appear here as you upload more periods of data.
+    </div>
+  );
+}
+
+function ProductTable({ title, subtitle, rows, positive }: { title: string; subtitle: string; rows: Sku[]; positive?: boolean }) {
   return (
     <Card>
       <CardHeader className="pb-2">

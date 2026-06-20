@@ -1,5 +1,6 @@
-import { SKUS, byMarket, topProducts, worstProducts } from "./mock-data";
-import { LEAKS, leakSummary } from "./leaks";
+import { SKUS } from "./mock-data";
+import { byMarket, topProducts, worstProducts } from "./aggregates";
+import { detectLeaks } from "./leaks";
 import { summarize } from "./profit";
 import { formatCurrency, formatPercent } from "./format";
 import type { AiRecommendation, Sku } from "./types";
@@ -7,27 +8,37 @@ import type { AiRecommendation, Sku } from "./types";
 /**
  * AI Profit Agent core.
  *
- * `buildRecommendations` and `mockChatAnswer` are fully self-contained
- * so the agent always works, even with no OpenAI key. When a key IS
- * present, the API route augments these with a live model call using
- * `buildContext()` as grounding.
+ * Every function accepts a SKU array (defaults to the sample dataset) so the
+ * agent runs identically on a customer's REAL uploaded data or on sample data.
+ * `buildRecommendations` and `mockChatAnswer` are self-contained; the API route
+ * augments them with a live model call using `buildContext()` as grounding.
  */
-
-const summary = summarize(SKUS);
 
 const byMargin = (a: Sku, b: Sku) => a.marginPct - b.marginPct;
 
-export function buildRecommendations(): AiRecommendation[] {
+function leakTotals(skus: Sku[]) {
+  const leaks = detectLeaks(skus);
+  return {
+    leaks,
+    count: leaks.length,
+    totalMonthly: leaks.reduce((s, l) => s + l.monthlyLoss, 0),
+    affectedSkus: new Set(leaks.map((l) => l.skuId)).size,
+  };
+}
+
+export function buildRecommendations(skus: Sku[] = SKUS): AiRecommendation[] {
   const recs: AiRecommendation[] = [];
-  const worst = worstProducts(3);
-  const best = topProducts(3);
-  const markets = [...byMarket()].sort((a, b) => b.margin - a.margin);
+  if (skus.length === 0) return recs;
+
+  const worst = worstProducts(skus, 3);
+  const best = topProducts(skus, 3);
+  const markets = [...byMarket(skus)].sort((a, b) => b.margin - a.margin);
   const bestMarket = markets[0];
-  const thin = [...SKUS]
+  const thin = [...skus]
     .filter((s) => s.status === "Low Margin" || s.status === "At Risk")
     .sort(byMargin)[0];
-  const heavyAd = [...SKUS].sort((a, b) => b.adSpend / b.revenue - a.adSpend / a.revenue)[0];
-  const heavyShip = [...SKUS].sort(
+  const heavyAd = [...skus].sort((a, b) => b.adSpend / b.revenue - a.adSpend / a.revenue)[0];
+  const heavyShip = [...skus].sort(
     (a, b) => b.shippingCost / b.revenue - a.shippingCost / a.revenue
   )[0];
   const loser = worst[0];
@@ -52,7 +63,7 @@ export function buildRecommendations(): AiRecommendation[] {
     });
   }
 
-  if (heavyAd) {
+  if (heavyAd && heavyAd.revenue > 0) {
     const save = Math.round(heavyAd.adSpend * 0.35);
     recs.push({
       id: "rec-adbudget",
@@ -91,7 +102,7 @@ export function buildRecommendations(): AiRecommendation[] {
     });
   }
 
-  if (heavyShip) {
+  if (heavyShip && heavyShip.revenue > 0) {
     const save = Math.round((heavyShip.shippingCost - heavyShip.revenue * 0.08) * 0.6);
     recs.push({
       id: "rec-shipping",
@@ -110,21 +121,23 @@ export function buildRecommendations(): AiRecommendation[] {
     });
   }
 
-  recs.push({
-    id: "rec-inventory",
-    title: `Prioritize restock & ad budget on ${topWinner.sku}`,
-    category: "Inventory",
-    priority: "Medium",
-    confidence: 86,
-    monthlyImpact: Math.round(topWinner.netProfit * 0.2),
-    explanation: `${topWinner.productName} is your single most profitable SKU at ${formatCurrency(
-      topWinner.netProfit
-    )}/mo net (${formatPercent(topWinner.marginPct)} margin). It's under-funded relative to its return.`,
-    suggestedAction: `Guarantee stock coverage and shift freed ad budget here. Scaling 20% adds ~${formatCurrency(
-      Math.round(topWinner.netProfit * 0.2)
-    )}/mo.`,
-    relatedSku: topWinner.sku,
-  });
+  if (topWinner) {
+    recs.push({
+      id: "rec-inventory",
+      title: `Prioritize restock & ad budget on ${topWinner.sku}`,
+      category: "Inventory",
+      priority: "Medium",
+      confidence: 86,
+      monthlyImpact: Math.round(topWinner.netProfit * 0.2),
+      explanation: `${topWinner.productName} is your single most profitable SKU at ${formatCurrency(
+        topWinner.netProfit
+      )}/mo net (${formatPercent(topWinner.marginPct)} margin). It's under-funded relative to its return.`,
+      suggestedAction: `Guarantee stock coverage and shift freed ad budget here. Scaling 20% adds ~${formatCurrency(
+        Math.round(topWinner.netProfit * 0.2)
+      )}/mo.`,
+      relatedSku: topWinner.sku,
+    });
+  }
 
   if (loser && loser.netProfit < 0) {
     recs.push({
@@ -144,20 +157,22 @@ export function buildRecommendations(): AiRecommendation[] {
     });
   }
 
-  const ls = leakSummary();
-  recs.push({
-    id: "rec-margin",
-    title: "Execute the top 5 leak fixes this month",
-    category: "Margin",
-    priority: "High",
-    confidence: 90,
-    monthlyImpact: Math.round(LEAKS.slice(0, 5).reduce((s, l) => s + l.monthlyLoss, 0) * 0.7),
-    explanation: `MarginMind found ${ls.count} active profit leaks totaling ${formatCurrency(
-      ls.totalMonthly
-    )}/mo across ${ls.affectedSkus} SKUs. The top 5 alone are ~70% recoverable.`,
-    suggestedAction:
-      "Work the Profit Leaks queue top-down. Closing the five biggest leaks compounds to a material annual margin gain.",
-  });
+  const ls = leakTotals(skus);
+  if (ls.count > 0) {
+    recs.push({
+      id: "rec-margin",
+      title: "Execute the top 5 leak fixes this month",
+      category: "Margin",
+      priority: "High",
+      confidence: 90,
+      monthlyImpact: Math.round(ls.leaks.slice(0, 5).reduce((s, l) => s + l.monthlyLoss, 0) * 0.7),
+      explanation: `MarginMind found ${ls.count} active profit leaks totaling ${formatCurrency(
+        ls.totalMonthly
+      )}/mo across ${ls.affectedSkus} SKUs. The top 5 alone are ~70% recoverable.`,
+      suggestedAction:
+        "Work the Profit Leaks queue top-down. Closing the five biggest leaks compounds to a material annual margin gain.",
+    });
+  }
 
   return recs.sort((a, b) => b.monthlyImpact - a.monthlyImpact);
 }
@@ -165,14 +180,18 @@ export function buildRecommendations(): AiRecommendation[] {
 export const RECOMMENDATIONS = buildRecommendations();
 
 /** Compact grounding context for an LLM prompt. */
-export function buildContext(): string {
-  const markets = byMarket()
+export function buildContext(skus: Sku[] = SKUS): string {
+  const summary = summarize(skus);
+  const markets = byMarket(skus)
     .map((m) => `${m.market}: ${formatPercent(m.margin)} margin, ${formatCurrency(m.revenue)} rev`)
     .join("; ");
-  const losers = SKUS.filter((s) => s.netProfit < 0)
+  const losers = skus
+    .filter((s) => s.netProfit < 0)
     .map((s) => `${s.sku} (${s.productName}) net ${formatCurrency(s.netProfit)}`)
     .join("; ");
-  const ls = leakSummary();
+  const ls = leakTotals(skus);
+  const best = topProducts(skus, 1)[0];
+  const worst = worstProducts(skus, 1)[0];
   return [
     `Business snapshot (monthly): revenue ${formatCurrency(summary.revenue)}, net profit ${formatCurrency(
       summary.netProfit
@@ -180,7 +199,7 @@ export function buildContext(): string {
     `Markets — ${markets}.`,
     `Profit leaks: ${ls.count} totaling ${formatCurrency(ls.totalMonthly)}/mo.`,
     `Money-losing SKUs: ${losers || "none"}.`,
-    `Best SKU: ${topProducts(1)[0].sku}. Worst SKU: ${worstProducts(1)[0].sku}.`,
+    `Best SKU: ${best?.sku ?? "n/a"}. Worst SKU: ${worst?.sku ?? "n/a"}.`,
   ].join("\n");
 }
 
@@ -192,11 +211,12 @@ export const SUGGESTED_QUESTIONS = [
   "Which products should I discontinue?",
 ];
 
-/** Deterministic, high-quality fallback answers grounded in real data. */
-export function mockChatAnswer(question: string): string {
+/** Deterministic, high-quality fallback answers grounded in the active dataset. */
+export function mockChatAnswer(question: string, skus: Sku[] = SKUS): string {
   const q = question.toLowerCase();
-  const fmtList = (skus: Sku[]) =>
-    skus
+  const summary = summarize(skus);
+  const fmtList = (list: Sku[]) =>
+    list
       .map(
         (s) =>
           `• **${s.sku} — ${s.productName}**: ${formatCurrency(s.netProfit)}/mo net (${formatPercent(
@@ -206,7 +226,7 @@ export function mockChatAnswer(question: string): string {
       .join("\n");
 
   if (/(lose|losing|unprofitable|negative)/.test(q)) {
-    const losers = SKUS.filter((s) => s.netProfit < 0).sort((a, b) => a.netProfit - b.netProfit);
+    const losers = skus.filter((s) => s.netProfit < 0).sort((a, b) => a.netProfit - b.netProfit);
     if (!losers.length) return "Good news — no SKUs are currently net-negative.";
     const total = losers.reduce((s, k) => s + Math.abs(k.netProfit), 0);
     return `You have **${losers.length} SKUs losing money**, bleeding **${formatCurrency(
@@ -217,7 +237,8 @@ export function mockChatAnswer(question: string): string {
   }
 
   if (/(ad|advertis|roas|marketing)/.test(q)) {
-    const heavy = [...SKUS]
+    const heavy = [...skus]
+      .filter((s) => s.revenue > 0)
       .sort((a, b) => b.adSpend / b.revenue - a.adSpend / a.revenue)
       .slice(0, 3);
     return `Cut ad spend where ROAS no longer covers fulfillment. Top candidates:\n\n${heavy
@@ -233,7 +254,8 @@ export function mockChatAnswer(question: string): string {
   }
 
   if (/(market|country|region|geograph)/.test(q)) {
-    const markets = [...byMarket()].sort((a, b) => b.margin - a.margin);
+    const markets = [...byMarket(skus)].sort((a, b) => b.margin - a.margin);
+    if (!markets.length) return "No market data available yet — upload data with a market column.";
     return `Ranked by net margin:\n\n${markets
       .map(
         (m, i) =>
@@ -245,7 +267,7 @@ export function mockChatAnswer(question: string): string {
   }
 
   if (/(discontinue|drop|kill|cut product|sunset)/.test(q)) {
-    const worst = worstProducts(3).filter((s) => s.netProfit < 0);
+    const worst = worstProducts(skus, 3).filter((s) => s.netProfit < 0);
     if (!worst.length) return "Nothing needs discontinuing right now — all SKUs are contribution-positive.";
     return `Strong candidates to discontinue or restructure:\n\n${fmtList(
       worst
@@ -253,19 +275,19 @@ export function mockChatAnswer(question: string): string {
   }
 
   if (/(increase|improve|grow|next month|more profit|boost)/.test(q)) {
-    const recs = RECOMMENDATIONS.slice(0, 3);
+    const recs = buildRecommendations(skus).slice(0, 3);
     const total = recs.reduce((s, r) => s + r.monthlyImpact, 0);
     return `Here's how to add roughly **${formatCurrency(total)}/mo** next month:\n\n${recs
       .map((r, i) => `${i + 1}. **${r.title}** — +${formatCurrency(r.monthlyImpact)}/mo (${r.confidence}% confidence)`)
       .join("\n")}\n\nWork these top-down in the AI Profit Agent queue.`;
   }
 
-  // Default summary
+  const ls = leakTotals(skus);
   return `Here's your profit snapshot:\n\n• Revenue: **${formatCurrency(
     summary.revenue
   )}/mo**\n• Net profit: **${formatCurrency(summary.netProfit)}/mo** (${formatPercent(
     summary.avgMargin
   )} avg margin)\n• Active profit leaks: **${formatCurrency(
-    leakSummary().totalMonthly
+    ls.totalMonthly
   )}/mo** recoverable\n\nAsk me about losing products, ad spend, your best market, or how to grow profit next month.`;
 }

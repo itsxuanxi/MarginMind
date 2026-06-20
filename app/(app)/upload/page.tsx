@@ -17,7 +17,9 @@ import {
   ArrowRight,
   X,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { features } from "@/lib/config";
 import { PageHeader, SectionHeading, DemoModeBanner } from "@/components/shared";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,6 +65,8 @@ function formatBytes(bytes: number): string {
 interface Preview {
   name: string;
   size: string;
+  sizeBytes: number;
+  text: string;
   headers: string[];
   rows: string[][];
   totalRows: number;
@@ -74,7 +78,15 @@ export default function UploadPage() {
   const [preview, setPreview] = React.useState<Preview | null>(null);
   const [history, setHistory] = React.useState<HistoryItem[]>(INITIAL_HISTORY);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const router = useRouter();
   const activeDataset = DATASETS.find((d) => d.id === dataset)!;
+
+  const setStatus = (id: string, status: HistoryItem["status"], rows?: number) =>
+    setHistory((prev) => {
+      const next = prev.map((x) => (x.id === id ? { ...x, status, ...(rows != null ? { rows } : {}) } : x));
+      try { localStorage.setItem(HISTORY_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+      return next;
+    });
 
   // Load persisted history on mount.
   React.useEffect(() => {
@@ -114,6 +126,8 @@ export default function UploadPage() {
       setPreview({
         name: file.name,
         size: formatBytes(file.size),
+        sizeBytes: file.size,
+        text,
         headers,
         rows,
         totalRows: lines.length - 1,
@@ -137,10 +151,11 @@ export default function UploadPage() {
     if (file) parseFile(file);
   };
 
-  const runImport = () => {
+  const runImport = async () => {
     if (!preview) return;
+    const id = `h${Date.now()}`;
     const item: HistoryItem = {
-      id: `h${Date.now()}`,
+      id,
       file: preview.name,
       dataset: activeDataset.label,
       rows: preview.totalRows,
@@ -148,21 +163,38 @@ export default function UploadPage() {
       status: "Processing",
       at: new Date().toISOString(),
     };
+    const csv = preview.text;
+    const fileName = preview.name;
+    const fileSize = preview.sizeBytes;
     persist([item, ...history]);
     setPreview(null);
-    toast.success("Import started. We'll process it in the background.");
+
+    // Real ingestion when a database is connected.
+    if (features.supabase) {
+      try {
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dataset, fileName, fileSize, csv }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Import failed.");
+        setStatus(id, "Completed", data.imported);
+        toast.success(`Imported ${data.imported} rows — your dashboard now reflects your real data.`);
+        router.refresh();
+      } catch (err) {
+        setStatus(id, "Failed");
+        toast.error(err instanceof Error ? err.message : "Import failed. Please try again.");
+      }
+      return;
+    }
+
+    // Demo fallback (no database connected yet).
+    toast.success("Import started.");
     setTimeout(() => {
-      setHistory((prev) => {
-        const next = prev.map((x) => (x.id === item.id ? { ...x, status: "Completed" as const } : x));
-        try {
-          localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
-        } catch {
-          /* ignore */
-        }
-        return next;
-      });
-      toast.success(`${item.file} imported successfully.`);
-    }, 1800);
+      setStatus(id, "Completed");
+      toast.success(`${fileName} imported (sample workspace — connect Supabase to persist).`);
+    }, 1500);
   };
 
   const sampleCsv = () => {

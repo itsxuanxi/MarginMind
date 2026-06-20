@@ -61,9 +61,8 @@ export function Hero() {
           </FadeUp>
 
           <FadeUp delay={0.5}>
-            <p className="mx-auto mt-4 max-w-xl text-pretty text-[15px] text-foreground/80">
-              Explore a <span className="font-semibold text-foreground">live demo with sample ecommerce data</span> —
-              no setup, no card. Connect your stores or upload a CSV later when you&apos;re ready.
+            <p className="mx-auto mt-5 max-w-xl text-pretty text-lg text-muted-foreground">
+              Most ecommerce brands know revenue. Very few know actual profit.
             </p>
           </FadeUp>
 
@@ -72,7 +71,7 @@ export function Hero() {
               <Link href="/sign-up">Start Free Trial <ArrowRight className="size-4" /></Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full transition-transform hover:scale-[1.03] sm:w-auto">
-              <Link href="/dashboard"><PlayCircle className="size-4" /> Try live demo with sample data</Link>
+              <Link href="/dashboard"><PlayCircle className="size-4" /> Explore Live Demo</Link>
             </Button>
           </FadeUp>
 
