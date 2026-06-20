@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Plus, Trash2, Mail, Building2, Check } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { PageHeader, SectionHeading } from "@/components/shared";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -28,6 +29,11 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <PageHeader title="Settings" description="Manage your workspace, team and preferences." />
+
+      <div className="rounded-xl border border-border bg-secondary/40 px-4 py-2.5 text-sm text-muted-foreground">
+        Preferences apply to your current session. Permanent saving, team invites and store
+        management activate once you connect a workspace.
+      </div>
 
       <Tabs defaultValue="general" className="space-y-6">
         <TabsList>
@@ -57,7 +63,7 @@ export default function SettingsPage() {
                   <Select defaultValue="January"><option>January</option><option>April</option><option>July</option><option>October</option></Select>
                 </div>
               </div>
-              <div className="flex justify-end"><Button variant="brand" onClick={() => toast.success("Workspace settings saved.")}><Check className="size-4" /> Save changes</Button></div>
+              <div className="flex justify-end"><Button variant="brand" onClick={() => toast.success("Settings updated for this session.")}><Check className="size-4" /> Save changes</Button></div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -66,7 +72,7 @@ export default function SettingsPage() {
           <Card>
             <CardHeader className="flex-row items-center justify-between space-y-0">
               <SectionHeading title="Connected stores" description="Stores feeding profit data into MarginMind." />
-              <Button variant="outline" size="sm" onClick={() => toast("Opening store connection…")}><Plus className="size-4" /> Add store</Button>
+              <Button asChild variant="outline" size="sm"><Link href="/integrations"><Plus className="size-4" /> Add store</Link></Button>
             </CardHeader>
             <CardContent className="space-y-3">
               {STORES.map((s) => (
@@ -90,7 +96,7 @@ export default function SettingsPage() {
             <CardHeader><SectionHeading title="Invite teammates" description="Bring your team into the profit conversation." /></CardHeader>
             <CardContent className="space-y-4">
               <form
-                onSubmit={(e) => { e.preventDefault(); if (invite) { toast.success(`Invitation sent to ${invite}`); setInvite(""); } }}
+                onSubmit={(e) => { e.preventDefault(); if (invite) { toast.success("Team invites activate once your workspace is connected."); setInvite(""); } }}
                 className="flex flex-col gap-2 sm:flex-row"
               >
                 <div className="relative flex-1">
@@ -114,7 +120,7 @@ export default function SettingsPage() {
                       <Badge variant={m.status === "Active" ? "success" : "info"}>{m.status}</Badge>
                       <span className="text-sm text-muted-foreground">{m.role}</span>
                       {m.role !== "Owner" && (
-                        <Button variant="ghost" size="icon" onClick={() => toast("Member removed")}><Trash2 className="size-4 text-muted-foreground" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => toast("Team management activates once your workspace is connected.")}><Trash2 className="size-4 text-muted-foreground" /></Button>
                       )}
                     </div>
                   </div>
@@ -137,7 +143,7 @@ export default function SettingsPage() {
               ].map((n) => (
                 <div key={n.key} className="flex items-center justify-between border-b border-border py-3 last:border-0">
                   <div><p className="text-sm font-medium">{n.title}</p><p className="text-xs text-muted-foreground">{n.desc}</p></div>
-                  <Switch checked={(notif as any)[n.key]} onCheckedChange={(v) => { setNotif((s) => ({ ...s, [n.key]: v })); toast.success("Preference updated."); }} />
+                  <Switch checked={(notif as any)[n.key]} onCheckedChange={(v) => { setNotif((s) => ({ ...s, [n.key]: v })); toast.success("Preference updated for this session."); }} />
                 </div>
               ))}
             </CardContent>

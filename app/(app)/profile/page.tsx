@@ -24,6 +24,11 @@ export default function ProfilePage() {
     <div className="space-y-6">
       <PageHeader title="Your Profile" description="Manage your personal account and security." />
 
+      <div className="rounded-xl border border-border bg-secondary/40 px-4 py-2.5 text-sm text-muted-foreground">
+        Profile &amp; security settings are session-only here. Persistent accounts, password resets
+        and session management activate once authentication is connected.
+      </div>
+
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-1">
           <CardContent className="flex flex-col items-center p-6 text-center">
@@ -52,7 +57,7 @@ export default function ProfilePage() {
               <div className="space-y-1.5"><Label>Role</Label><Input defaultValue="Founder" /></div>
               <div className="space-y-1.5"><Label>Phone</Label><Input defaultValue="+1 (555) 012-3456" /></div>
             </div>
-            <div className="flex justify-end"><Button variant="brand" onClick={() => toast.success("Profile updated.")}><Check className="size-4" /> Save</Button></div>
+            <div className="flex justify-end"><Button variant="brand" onClick={() => toast.success("Profile updated for this session.")}><Check className="size-4" /> Save</Button></div>
           </CardContent>
         </Card>
       </div>
@@ -69,7 +74,7 @@ export default function ProfilePage() {
           </div>
           <div className="flex items-center justify-between rounded-lg border border-border p-4">
             <div><p className="text-sm font-medium">Password</p><p className="text-xs text-muted-foreground">Last changed 3 months ago</p></div>
-            <Button variant="outline" size="sm" onClick={() => toast("Password reset email sent")}>Change password</Button>
+            <Button variant="outline" size="sm" onClick={() => toast("Password management activates once authentication is connected.")}>Change password</Button>
           </div>
         </CardContent>
       </Card>
@@ -83,7 +88,7 @@ export default function ProfilePage() {
                 <span className="flex size-10 items-center justify-center rounded-lg bg-secondary"><s.icon className="size-5 text-muted-foreground" /></span>
                 <div><p className="text-sm font-medium">{s.device}</p><p className="text-xs text-muted-foreground">{s.location}</p></div>
               </div>
-              {s.current ? <Badge variant="success">This device</Badge> : <Button variant="ghost" size="sm" onClick={() => toast("Session revoked")}><LogOut className="size-4" /> Revoke</Button>}
+              {s.current ? <Badge variant="success">This device</Badge> : <Button variant="ghost" size="sm" onClick={() => toast("Session management activates once authentication is connected.")}><LogOut className="size-4" /> Revoke</Button>}
             </div>
           ))}
         </CardContent>
