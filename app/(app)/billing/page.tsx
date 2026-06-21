@@ -90,7 +90,7 @@ export default async function BillingPage() {
 
       {/* Plans */}
       <Card>
-        <CardHeader><SectionHeading title={e.isPaid ? "Change plan" : "Upgrade your plan"} description="Founding pricing is locked for life. 14-day free trial on every plan." /></CardHeader>
+        <CardHeader><SectionHeading title={e.isPaid ? "Change plan" : "Upgrade your plan"} description="Founding pricing is locked for life. Your first analysis is free." /></CardHeader>
         <CardContent>
           <PricingPlans />
         </CardContent>

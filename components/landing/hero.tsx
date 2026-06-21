@@ -66,7 +66,7 @@ export function Hero() {
 
           <FadeUp delay={0.58} className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button asChild variant="brand" size="lg" className="w-full transition-transform hover:scale-[1.03] sm:w-auto">
-              <Link href="/sign-up">Start Free Trial <ArrowRight className="size-4" /></Link>
+              <Link href="/sign-up">Start Free <ArrowRight className="size-4" /></Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full transition-transform hover:scale-[1.03] sm:w-auto">
               <Link href="/dashboard"><PlayCircle className="size-4" /> Explore Live Demo</Link>
@@ -74,7 +74,7 @@ export function Hero() {
           </FadeUp>
 
           <FadeUp delay={0.66} className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1"><CheckCircle2 className="size-3.5 text-brand" /> 14-day free trial</span>
+            <span className="flex items-center gap-1"><CheckCircle2 className="size-3.5 text-brand" /> 1 free analysis</span>
             <span className="flex items-center gap-1"><CheckCircle2 className="size-3.5 text-brand" /> No credit card</span>
             <span className="flex items-center gap-1"><Database className="size-3.5 text-brand" /> Upload CSV later when ready</span>
           </FadeUp>

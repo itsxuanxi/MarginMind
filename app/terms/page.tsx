@@ -20,7 +20,7 @@ export default function TermsPage() {
           heading: "Accounts & Subscriptions",
           body: [
             "You must provide accurate information when creating an account and are responsible for safeguarding your credentials. Paid plans are billed in advance on a recurring monthly basis through our payment processor.",
-            "All plans begin with a 14-day free trial. You may cancel at any time; cancellation takes effect at the end of the current billing period and does not entitle you to a prorated refund except where required by law.",
+            "Your first profit analysis is free, with no payment required. Paid plans are billed immediately when you subscribe. You may cancel at any time; cancellation takes effect at the end of the current billing period and does not entitle you to a prorated refund except where required by law.",
           ],
         },
         {

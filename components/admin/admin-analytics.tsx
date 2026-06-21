@@ -30,14 +30,14 @@ export function AdminAnalytics() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Total Signups" value={formatNumber(M.totalSignups)} icon={Users} delta={14.2} deltaLabel="vs last month" />
         <StatCard label="Active Users" value={formatNumber(M.activeUsers)} icon={UserCheck} delta={9.1} deltaLabel="MAU" tone="positive" />
-        <StatCard label="Trial Users" value={formatNumber(M.trialUsers)} icon={Beaker} hint="in 14-day trial" />
+        <StatCard label="Free Users" value={formatNumber(M.trialUsers)} icon={Beaker} hint="on the free analysis" />
         <StatCard label="Paid Users" value={formatNumber(M.paidUsers)} icon={CreditCard} delta={6.8} deltaLabel="vs last month" tone="positive" />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="MRR" value={formatCurrency(M.mrr)} icon={DollarSign} delta={11.4} deltaLabel="vs last month" tone="positive" />
         <StatCard label="ARR" value={formatCurrency(M.arr, { compact: true })} icon={TrendingUp} tone="positive" hint="annual run-rate" />
-        <StatCard label="Conversion Rate" value={`${M.conversionRate}%`} icon={Percent} delta={1.3} deltaLabel="trial → paid" tone="positive" />
+        <StatCard label="Conversion Rate" value={`${M.conversionRate}%`} icon={Percent} delta={1.3} deltaLabel="free → paid" tone="positive" />
         <StatCard label="Churn Rate" value={`${M.churnRate}%`} icon={Activity} delta={-0.4} deltaLabel="vs last month" tone="positive" />
       </div>
 

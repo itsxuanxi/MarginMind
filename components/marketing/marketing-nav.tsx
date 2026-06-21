@@ -37,7 +37,7 @@ export function MarketingNav() {
             <Link href="/sign-in">Sign in</Link>
           </Button>
           <Button asChild variant="brand" size="sm">
-            <Link href="/sign-up">Start Free Trial</Link>
+            <Link href="/sign-up">Start Free</Link>
           </Button>
         </div>
         <button className="rounded-lg p-2 hover:bg-accent md:hidden" onClick={() => setOpen((v) => !v)}>
@@ -61,7 +61,7 @@ export function MarketingNav() {
               <Link href="/sign-in">Sign in</Link>
             </Button>
             <Button asChild variant="brand" size="sm" className="flex-1">
-              <Link href="/sign-up">Start Free Trial</Link>
+              <Link href="/sign-up">Start Free</Link>
             </Button>
           </div>
         </div>

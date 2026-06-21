@@ -6,7 +6,7 @@ import { FAQ } from "@/components/landing/faq";
 
 export const metadata: Metadata = {
   title: "Pricing",
-  description: "Simple, transparent pricing for ecommerce brands. 14-day free trial.",
+  description: "Simple, transparent pricing for ecommerce brands. Your first analysis is free.",
 };
 
 export default function PricingPage() {
@@ -22,7 +22,7 @@ export default function PricingPage() {
               Pricing that scales with your margin
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              Every plan includes a 14-day free trial. Founding customers lock in their price for life.
+              Your first profit analysis is free. Founding customers lock in their price for life.
             </p>
           </div>
         </div>

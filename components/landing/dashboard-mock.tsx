@@ -100,7 +100,7 @@ export function DashboardMock() {
           <div className="mt-auto rounded-lg bg-sidebar-accent p-2.5">
             <div className="flex items-center justify-between">
               <p className="text-[10px] text-sidebar-muted">Growth plan</p>
-              <span className="rounded bg-brand/15 px-1 text-[9px] font-semibold text-brand">Trial</span>
+              <span className="rounded bg-brand/15 px-1 text-[9px] font-semibold text-brand">Free</span>
             </div>
             <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-sidebar">
               <div className="h-full w-[65%] rounded-full bg-brand" />

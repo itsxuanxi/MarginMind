@@ -79,7 +79,6 @@ export async function POST(req: Request) {
       line_items: [{ price, quantity: 1 }],
       ...(customer ? { customer } : email ? { customer_email: email } : {}),
       subscription_data: {
-        trial_period_days: 14,
         metadata: { plan, userId },
       },
       metadata: { plan, userId },

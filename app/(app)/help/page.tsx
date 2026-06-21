@@ -26,7 +26,7 @@ const CATEGORIES = [
   { icon: TrendingDown, title: "Profit & Leaks", count: 9, desc: "How we calculate net profit and detect leaks." },
   { icon: Sparkles, title: "AI Profit Agent", count: 6, desc: "Get the most from recommendations and chat." },
   { icon: Plug, title: "Integrations", count: 10, desc: "Connect Shopify, Amazon, TikTok, ad platforms." },
-  { icon: CreditCard, title: "Billing & Plans", count: 7, desc: "Trials, upgrades, invoices and the founding program." },
+  { icon: CreditCard, title: "Billing & Plans", count: 7, desc: "Plans, upgrades, invoices and the founding program." },
 ];
 
 const ARTICLES = [

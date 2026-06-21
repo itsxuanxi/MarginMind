@@ -22,7 +22,7 @@ export const PLANS: Plan[] = [
     foundingPrice: 17,
     cadence: "/month",
     tagline: "For solo sellers getting a grip on profit.",
-    cta: "Start Free Trial",
+    cta: "Subscribe",
     limits: { stores: "1 Store", orders: "500 orders / month" },
     features: [
       "1 Store",
@@ -42,7 +42,7 @@ export const PLANS: Plan[] = [
     cadence: "/month",
     tagline: "For growing brands scaling across channels.",
     popular: true,
-    cta: "Start Free Trial",
+    cta: "Subscribe",
     limits: { stores: "3 Stores", orders: "5,000 orders / month" },
     features: [
       "3 Stores",
@@ -62,7 +62,7 @@ export const PLANS: Plan[] = [
     foundingPrice: 179,
     cadence: "/month",
     tagline: "For multi-brand operators and agencies.",
-    cta: "Start Free Trial",
+    cta: "Subscribe",
     limits: { stores: "Unlimited Stores", orders: "50,000 orders / month" },
     features: [
       "Unlimited Stores",

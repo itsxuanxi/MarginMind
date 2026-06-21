@@ -61,7 +61,7 @@ export default function LandingPage() {
             <SectionHead
               eyebrow="Pricing"
               title="Lock in founding pricing"
-              description="Two simple plans. Start with a 14-day free trial — cancel anytime."
+              description="Two simple plans. Your first analysis is free — subscribe anytime."
             />
           </MotionReveal>
           <MotionReveal delay={80} className="mt-6 flex justify-center">
@@ -73,7 +73,7 @@ export default function LandingPage() {
             <PricingPlans />
           </MotionReveal>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="size-4 text-brand" /> 14-day free trial</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="size-4 text-brand" /> 1 free analysis</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 className="size-4 text-brand" /> Cancel anytime</span>
             <span className="flex items-center gap-1.5"><Lock className="size-4 text-brand" /> Encrypted &amp; private</span>
           </div>
@@ -112,13 +112,13 @@ export default function LandingPage() {
           </p>
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button asChild variant="brand" size="lg" className="w-full transition-transform hover:scale-[1.03] sm:w-auto">
-              <Link href="/sign-up">Start Free Trial <ArrowRight className="size-4" /></Link>
+              <Link href="/sign-up">Start Free <ArrowRight className="size-4" /></Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full border-white/20 bg-white/5 text-white hover:bg-white/10 sm:w-auto">
               <Link href="/dashboard"><PlayCircle className="size-4" /> Explore Live Demo</Link>
             </Button>
           </div>
-          <p className="mt-6 text-sm text-sidebar-muted">No credit card required · 14-day free trial</p>
+          <p className="mt-6 text-sm text-sidebar-muted">No credit card required · 1 free analysis</p>
         </MotionReveal>
       </section>
 

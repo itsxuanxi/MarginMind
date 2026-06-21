@@ -22,8 +22,8 @@ const FAQS = [
     a: "It analyzes your live margins, ad efficiency and return rates, then generates prioritized recommendations — pricing changes, ad reallocations, market expansion and discontinuation calls — each with a confidence score and estimated monthly impact. You can also chat with it in plain English.",
   },
   {
-    q: "Is there a free trial?",
-    a: "Yes — every plan starts with a 14-day free trial, no credit card required. Founding customers lock in 40% off for life.",
+    q: "Can I try it for free?",
+    a: "Yes — your first profit analysis is free, no credit card required. After that, pick a plan to keep analyzing. Founding customers lock in 40% off for life.",
   },
   {
     q: "Is my financial data secure?",

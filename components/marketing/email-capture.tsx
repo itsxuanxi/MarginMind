@@ -17,7 +17,7 @@ export function EmailCapture({ className, dark = false }: { className?: string; 
       return;
     }
     setDone(true);
-    toast.success("You're on the list — check your inbox for trial access.");
+    toast.success("You're on the list — check your inbox to get started.");
   };
 
   if (done) {
@@ -43,7 +43,7 @@ export function EmailCapture({ className, dark = false }: { className?: string; 
         )}
       />
       <Button type="submit" variant="brand" size="lg" className="shrink-0">
-        Start Free Trial <ArrowRight className="size-4" />
+        Start Free <ArrowRight className="size-4" />
       </Button>
     </form>
   );

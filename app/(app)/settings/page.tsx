@@ -138,7 +138,7 @@ export default function SettingsPage() {
                 { key: "weekly", title: "Weekly profit report", desc: "A Monday summary of last week's profit and margin." },
                 { key: "leaks", title: "New profit leaks", desc: "Get alerted when a new leak crosses a severity threshold." },
                 { key: "ai", title: "AI recommendations", desc: "Notify me when high-impact recommendations are ready." },
-                { key: "billing", title: "Billing & usage", desc: "Trial reminders, receipts and usage limits." },
+                { key: "billing", title: "Billing & usage", desc: "Receipts, plan changes and usage limits." },
                 { key: "product", title: "Product updates", desc: "Occasional news about new features." },
               ].map((n) => (
                 <div key={n.key} className="flex items-center justify-between border-b border-border py-3 last:border-0">

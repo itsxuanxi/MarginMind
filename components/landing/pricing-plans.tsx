@@ -120,7 +120,7 @@ export function PricingPlans() {
             className="mt-6 w-full"
           >
             {loading === plan.id ? <Loader2 className="size-4 animate-spin" /> : null}
-            Start Free Trial
+            Subscribe
           </Button>
 
           <ul className="mt-6 space-y-2.5">

@@ -141,7 +141,7 @@ export function DemoAuth({ mode }: { mode: Mode }) {
         ) : (
           <>
             New to MarginMind?{" "}
-            <Link href="/sign-up" className="font-medium text-brand hover:underline">Start free trial</Link>
+            <Link href="/sign-up" className="font-medium text-brand hover:underline">Start free</Link>
           </>
         )}
       </div>
