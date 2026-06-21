@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const FAQS = [
   {
     q: "How is MarginMind different from my store analytics?",
-    a: "Shopify, Amazon and TikTok analytics show revenue and basic costs. MarginMind reconstructs true net profit per SKU — folding in shipping, customs duties, return costs, platform fees, ad spend and storage — then tells you exactly where margin is leaking and what to do about it.",
+    a: "Shopify, Amazon and TikTok analytics show revenue and basic costs. MarginMind reconstructs true net profit per SKU — folding in shipping, returns, platform and payment fees, ad spend, storage and operating costs — then tells you exactly where margin is leaking and what to do about it.",
   },
   {
     q: "Do I need to connect my store to get started?",
@@ -15,7 +15,7 @@ const FAQS = [
   },
   {
     q: "Which channels and markets are supported?",
-    a: "Shopify, Amazon, TikTok Shop and Walmart Marketplace across the US, Canada, UK, Germany and Australia — with per-market customs and duty modeling built in for cross-border sellers.",
+    a: "Shopify, Amazon, TikTok Shop and Walmart Marketplace across the US, Canada, UK, Germany and Australia. Selling internationally? Per-market customs and duty modeling is built in — so cross-border costs show up in true profit too.",
   },
   {
     q: "How does the AI Profit Agent work?",

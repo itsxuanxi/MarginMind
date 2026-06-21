@@ -72,8 +72,8 @@ export function RoiCalculator() {
 
             <p className="rounded-xl border border-border bg-secondary/40 p-4 text-xs leading-relaxed text-muted-foreground">
               Based on the median <span className="font-semibold text-foreground">{(rate * 100).toFixed(1)}%</span> of
-              revenue cross-border sellers recover in the first 90 days after surfacing hidden
-              shipping, customs, return and ad-waste leaks.
+              revenue ecommerce brands recover in the first 90 days after surfacing hidden
+              shipping, returns, fees and ad-waste leaks.
             </p>
           </div>
         </div>

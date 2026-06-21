@@ -23,7 +23,7 @@ export function AuthShell({
         <div className="relative space-y-6">
           <blockquote className="text-2xl font-medium leading-snug text-white">
             &ldquo;MarginMind was built because revenue is easy to measure, but true profit is often
-            hidden behind shipping, duties, returns and ad spend. We help sellers see what actually
+            hidden behind shipping, returns, fees and ad spend. We help brands see what actually
             makes money.&rdquo;
           </blockquote>
           <div className="flex items-center gap-3">

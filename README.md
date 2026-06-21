@@ -1,9 +1,10 @@
 # MarginMind
 
-**AI Profit Agent for Cross-Border E-commerce Sellers.**
+**AI Profit Intelligence for Ecommerce.**
 
-Know your real profit across every product, market, and channel. MarginMind tracks true
-margins, detects profit leaks, and recommends the actions that grow your bottom line.
+Revenue is visible. Profit is hidden. MarginMind helps ecommerce brands know their real
+profit across every product, market, and channel — tracking true margins, detecting profit
+leaks, and recommending the actions that grow the bottom line.
 
 > Built to feel like Ramp × Stripe × Linear × Shopify Analytics — premium, trustworthy, and AI-native.
 

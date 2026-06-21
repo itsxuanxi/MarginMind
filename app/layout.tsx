@@ -6,24 +6,25 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "MarginMind — AI Profit Agent for Cross-Border E-commerce",
+    default: "MarginMind — AI Profit Intelligence for Ecommerce",
     template: "%s · MarginMind",
   },
   description:
-    "Know your real profit across every product, market, and channel. MarginMind tracks true margins, detects profit leaks, and recommends actions that improve profitability.",
+    "Revenue is visible. Profit is hidden. MarginMind helps ecommerce brands uncover hidden profit leaks, track true profitability by SKU, channel and market, and make smarter decisions in real time.",
   keywords: [
     "ecommerce profit",
+    "profit intelligence",
     "margin analytics",
     "Shopify profit",
     "Amazon profit",
-    "cross-border ecommerce",
+    "SKU profitability",
     "profit leak detection",
   ],
   authors: [{ name: "MarginMind" }],
   openGraph: {
-    title: "MarginMind — AI Profit Agent for Cross-Border E-commerce",
+    title: "MarginMind — AI Profit Intelligence for Ecommerce",
     description:
-      "Track true margins, detect profit leaks, and let an AI agent recommend the actions that grow your bottom line.",
+      "Revenue is visible. Profit is hidden. Track true profitability across every product, market and channel — and find profit leaks before they hurt the business.",
     type: "website",
   },
 };

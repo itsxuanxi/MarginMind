@@ -1,16 +1,16 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { TrendingDown, Sparkles, Table2, Globe2 } from "lucide-react";
+import { TrendingDown, Table2, Store, Globe2 } from "lucide-react";
 import { DashboardMock } from "./dashboard-mock";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 const HIGHLIGHTS = [
-  { icon: TrendingDown, title: "Profit leaks, surfaced", body: "The exact SKUs draining margin — quantified, ranked, and fixable." },
-  { icon: Sparkles, title: "AI recommendations", body: "What to reprice, where to cut ad spend, which products to sunset." },
-  { icon: Table2, title: "SKU-level analysis", body: "Full P&L per product, with status badges from healthy to losing money." },
-  { icon: Globe2, title: "Market profitability", body: "True net margin by market and channel — not just revenue." },
+  { icon: Table2, title: "SKU profitability", body: "See which products actually make money — full P&L per SKU." },
+  { icon: Store, title: "Channel profitability", body: "Compare Shopify, Amazon, TikTok Shop and other channels." },
+  { icon: Globe2, title: "Market profitability", body: "Performance across regions and customer segments — not just revenue." },
+  { icon: TrendingDown, title: "Profit leak detection", body: "Hidden costs from shipping, returns, fees and operations — quantified." },
 ];
 
 export function DashboardShowcase() {

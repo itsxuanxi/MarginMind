@@ -2,7 +2,7 @@
   "name": "marginmind",
   "version": "1.0.0",
   "private": true,
-  "description": "MarginMind — AI Profit Agent for Cross-Border E-commerce Sellers",
+  "description": "MarginMind — AI Profit Intelligence for Ecommerce",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

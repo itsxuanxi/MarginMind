@@ -31,7 +31,7 @@ export function Hero() {
       </FadeUp>
       <FadeUp delay={0.9} className="pointer-events-none absolute right-5 top-1/2 hidden -translate-y-1/2 xl:block">
         <span className="block rotate-180 text-[11px] font-medium uppercase tracking-[0.35em] text-muted-foreground/50 [writing-mode:vertical-rl]">
-          AI-Native · Cross-Border
+          AI-Native · Profit-First
         </span>
       </FadeUp>
 
@@ -40,7 +40,7 @@ export function Hero() {
           <FadeUp delay={0.05} className="flex justify-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium shadow-sm">
               <span className="size-1.5 rounded-full bg-brand" />
-              <span className="text-muted-foreground">Built for cross-border sellers who care about true profit</span>
+              <span className="text-muted-foreground">AI Profit Intelligence for Ecommerce</span>
             </span>
           </FadeUp>
 
@@ -54,15 +54,15 @@ export function Hero() {
           </h1>
 
           <FadeUp delay={0.42}>
-            <p className="mx-auto mt-5 max-w-2xl text-pretty text-lg text-muted-foreground">
-              MarginMind is an AI Profit Agent for cross-border e-commerce sellers. It tracks
-              true margins, detects profit leaks, and recommends actions that improve profitability.
+            <p className="mx-auto mt-5 text-pretty text-xl font-medium tracking-tight text-foreground">
+              Revenue is visible. Profit is hidden.
             </p>
           </FadeUp>
 
           <FadeUp delay={0.5}>
-            <p className="mx-auto mt-5 max-w-xl text-pretty text-lg text-muted-foreground">
-              Most ecommerce brands know revenue. Very few know actual profit.
+            <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg text-muted-foreground">
+              MarginMind helps ecommerce brands uncover hidden profit leaks, track true
+              profitability, and make smarter decisions in real time.
             </p>
           </FadeUp>
 
@@ -82,7 +82,7 @@ export function Hero() {
           </FadeUp>
 
           <FadeUp delay={0.72} className="mt-6">
-            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">Designed for sellers on</p>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">Designed for brands on</p>
             <div className="mt-2.5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               {CHANNELS.map((c) => (
                 <span key={c} className="text-sm font-semibold tracking-tight text-muted-foreground/70">{c}</span>

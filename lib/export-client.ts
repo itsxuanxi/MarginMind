@@ -101,7 +101,7 @@ export async function downloadPdf(report: ReportData) {
   doc.setFont("helvetica", "normal");
   doc.setTextColor(...MUTED);
   doc.setFontSize(9.5);
-  doc.text("AI Profit Agent for Cross-Border E-commerce", M + 38, 68);
+  doc.text("AI Profit Intelligence for Ecommerce", M + 38, 68);
   doc.setFontSize(9.5);
   doc.text(`Generated ${d}`, W - M, 56, { align: "right" });
   doc.text("Confidential", W - M, 68, { align: "right" });

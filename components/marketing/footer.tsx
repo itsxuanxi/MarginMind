@@ -37,8 +37,8 @@ export function Footer() {
           <div className="col-span-2">
             <Logo />
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">
-              The AI Profit Agent for cross-border e-commerce. Know your real
-              profit across every product, market, and channel.
+              AI Profit Intelligence for ecommerce. Know your real profit across
+              every product, market, and channel.
             </p>
           </div>
           {COLUMNS.map((col) => (

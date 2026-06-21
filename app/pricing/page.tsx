@@ -6,7 +6,7 @@ import { FAQ } from "@/components/landing/faq";
 
 export const metadata: Metadata = {
   title: "Pricing",
-  description: "Simple, transparent pricing for cross-border e-commerce sellers. 14-day free trial.",
+  description: "Simple, transparent pricing for ecommerce brands. 14-day free trial.",
 };
 
 export default function PricingPage() {

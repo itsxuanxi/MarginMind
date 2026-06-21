@@ -105,7 +105,7 @@ const BLOCKS = [
     eyebrow: "02 — Detection",
     icon: TrendingDown,
     title: "Profit Leak Detection",
-    body: "MarginMind automatically finds the SKUs quietly losing money — high shipping, returns, customs and ad waste — and quantifies each.",
+    body: "MarginMind automatically finds the SKUs quietly losing money — hidden shipping, returns, fees and ad waste — and quantifies each.",
     Visual: LeakVisual,
   },
   {
