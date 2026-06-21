@@ -23,7 +23,7 @@ export function ProblemReveal() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.8, ease: EASE }}
-          className="text-balance text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl"
+          className="text-balance font-serif text-[3.25rem] italic leading-[1.02] tracking-[-0.02em] sm:text-7xl"
         >
           Revenue Up.
           <br />

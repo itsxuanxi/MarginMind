@@ -18,11 +18,16 @@ export default function LandingPage() {
       {/* Announcement bar */}
       <Link
         href="/pricing"
-        className="group flex items-center justify-center gap-2 bg-sidebar px-4 py-2.5 text-center text-sm text-sidebar-foreground transition-colors hover:text-white"
+        className="group flex items-center justify-center gap-2.5 bg-sidebar px-4 py-2.5 text-center text-[13px] text-sidebar-foreground transition-colors"
       >
-        <span className="rounded-full bg-brand px-2 py-0.5 text-[11px] font-semibold text-white">Founding offer</span>
-        <span>Only 50 founding spots — lock in $9.99 CAD/mo for life</span>
-        <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+        <span className="inline-flex items-center gap-1.5 text-brand">
+          <span className="size-1.5 rounded-full bg-brand" />
+          <span className="text-[10.5px] font-semibold uppercase tracking-[0.14em]">Founding offer</span>
+        </span>
+        <span className="text-sidebar-muted transition-colors group-hover:text-sidebar-foreground">
+          50 seats · $9.99 CAD/mo, locked for life
+        </span>
+        <ArrowRight className="size-3.5 text-sidebar-muted transition-all group-hover:translate-x-0.5 group-hover:text-white" />
       </Link>
 
       <MarketingNav />

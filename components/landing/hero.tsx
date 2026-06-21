@@ -42,23 +42,23 @@ export function Hero() {
             </span>
           </FadeUp>
 
-          <h1 className="mt-6 text-balance text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[3.5rem] lg:leading-[1.05]">
+          <h1 className="mt-7 text-balance text-[2.65rem] font-semibold leading-[1.03] tracking-[-0.03em] sm:text-5xl lg:text-[3.6rem]">
             <Rise delay={0.15}>Know Your Real Profit Across Every</Rise>
             <Rise delay={0.28}>
-              <span className="bg-gradient-to-r from-brand to-emerald-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-br from-brand-strong to-brand bg-clip-text text-transparent">
                 Product, Market, and Channel.
               </span>
             </Rise>
           </h1>
 
           <FadeUp delay={0.42}>
-            <p className="mx-auto mt-5 text-pretty text-xl font-medium tracking-tight text-foreground">
-              Revenue is visible. Profit is hidden.
+            <p className="mx-auto mt-6 font-serif text-[1.7rem] italic leading-[1.15] text-foreground sm:text-[2.05rem]">
+              Revenue is visible. <span className="text-brand-strong">Profit is hidden.</span>
             </p>
           </FadeUp>
 
           <FadeUp delay={0.5}>
-            <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg text-muted-foreground">
+            <p className="mx-auto mt-5 max-w-xl text-pretty text-[1.05rem] leading-relaxed text-muted-foreground">
               MarginMind helps ecommerce brands uncover hidden profit leaks, track true
               profitability, and make smarter decisions in real time.
             </p>

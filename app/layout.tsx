@@ -1,8 +1,23 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, Instrument_Serif } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { features } from "@/lib/config";
 import { Providers } from "./providers";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-instrument",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -41,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const content = (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${instrumentSerif.variable}`}>
       <body>
         <Providers>{children}</Providers>
       </body>
