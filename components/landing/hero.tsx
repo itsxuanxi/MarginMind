@@ -5,8 +5,6 @@ import {
   ArrowRight,
   CheckCircle2,
   PlayCircle,
-  Lock,
-  ShieldCheck,
   Database,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -88,14 +86,6 @@ export function Hero() {
                 <span key={c} className="text-sm font-semibold tracking-tight text-muted-foreground/70">{c}</span>
               ))}
             </div>
-          </FadeUp>
-
-          <FadeUp delay={0.78} className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-muted-foreground">
-            <span className="flex items-center gap-1.5"><Lock className="size-4 text-brand" /> 256-bit encryption</span>
-            <span className="h-3 w-px bg-border" />
-            <span className="flex items-center gap-1.5"><ShieldCheck className="size-4 text-brand" /> Row-level security</span>
-            <span className="h-3 w-px bg-border" />
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="size-4 text-brand" /> GDPR-ready</span>
           </FadeUp>
         </div>
 

@@ -8,9 +8,7 @@ import { MotionReveal } from "@/components/landing/motion";
 import { PricingPlans } from "@/components/landing/pricing-plans";
 import { RoiCalculator } from "@/components/landing/roi-calculator";
 import { ProblemReveal } from "@/components/landing/problem-reveal";
-import { DashboardShowcase } from "@/components/landing/dashboard-showcase";
-import { FeatureBlocks } from "@/components/landing/feature-blocks";
-import { ExampleOutcome } from "@/components/landing/example-outcome";
+import { DynamicExperience } from "@/components/landing/dynamic-experience";
 import { SectionHead } from "@/components/landing/section";
 import { Button } from "@/components/ui/button";
 
@@ -35,24 +33,19 @@ export default function LandingPage() {
       {/* ============ 2 · THE HIDDEN PROBLEM ============ */}
       <ProblemReveal />
 
-      {/* ============ 3 · LIVE DASHBOARD EXPERIENCE ============ */}
-      <section className="border-y border-border bg-card py-24 sm:py-32">
-        <DashboardShowcase />
+      {/* ============ 3 · DYNAMIC PRODUCT EXPERIENCE ============ */}
+      <section id="features">
+        <DynamicExperience />
       </section>
 
-      {/* ============ 4 · WHAT MARGINMIND DOES ============ */}
-      <section id="features" className="py-24 sm:py-32">
-        <FeatureBlocks />
-      </section>
-
-      {/* ============ 5 · ROI CALCULATOR ============ */}
-      <section className="border-y border-border bg-card py-24 sm:py-32">
+      {/* ============ 4 · ROI CALCULATOR ============ */}
+      <section className="py-24 sm:py-32">
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <MotionReveal>
             <SectionHead
               eyebrow="ROI calculator"
               title="How much profit are you leaving on the table?"
-              description="Drag the slider to estimate what surfacing hidden costs could recover for a business your size."
+              description="Estimate what surfacing hidden costs could recover."
             />
           </MotionReveal>
           <MotionReveal delay={120} className="mt-12 block">
@@ -61,12 +54,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============ 6 · EXAMPLE OUTCOME ============ */}
-      <section className="py-24 sm:py-32">
-        <ExampleOutcome />
-      </section>
-
-      {/* ============ 7 · PRICING ============ */}
+      {/* ============ 5 · PRICING ============ */}
       <section id="pricing" className="border-y border-border bg-card py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <MotionReveal>
@@ -92,7 +80,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============ 8 · FAQ ============ */}
+      {/* ============ 6 · FAQ ============ */}
       <section id="faq" className="py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <MotionReveal>
@@ -108,7 +96,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============ 9 · FINAL CTA ============ */}
+      {/* ============ 7 · FINAL CTA ============ */}
       <section className="relative overflow-hidden bg-sidebar py-28">
         <div className="absolute inset-0 grid-bg opacity-[0.06]" />
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
